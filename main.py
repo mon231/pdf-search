@@ -1,7 +1,15 @@
 import cv2
 from pathlib import Path
-from PyPDF2 import PdfReader
+from pdf2image import pdf2image
 from argparse import ArgumentParser
+from tempfile import TemporaryDirectory
+
+
+def generate_splitted_pdf(root_dir: Path):
+    for pdf_path in root_dir.rglob('*.pdf'):
+        with TemporaryDirectory() as extracted_pages_root:
+            pdf2image.convert_from_path(pdf_path, output_folder=extracted_pages_root, dpi=3000)
+            yield pdf_path, extracted_pages_root
 
 
 def subimage_similarity_percentage(sub_image: cv2.Mat, image: cv2.Mat):
@@ -12,42 +20,42 @@ def subimage_similarity_percentage(sub_image: cv2.Mat, image: cv2.Mat):
 
 
 def match_pdf_file(root_dir: Path, sub_image: cv2.Mat):
-    max_match_percentage, max_match_path, max_match_page_index = 0, None, 0
+    max_match_percentage, max_match_path = 0, ''
 
-    for pdf_path in root_dir.rglob('*.pdf'):
-        pdf_reader = PdfReader(pdf_path)
-
-        for page_index, pdf_page in enumerate(pdf_reader).pages:
-            # TODO: find matching percentage
-            page_mat: cv2.Mat = pdf_page
+    for pdf_path, extracted_pages_root in generate_splitted_pdf(root_dir):
+        for page_image_path in Path(extracted_pages_root).glob('*'):
+            page_mat = cv2.imread(str(page_image_path), cv2.IMREAD_COLOR)
             current_match = subimage_similarity_percentage(sub_image, page_mat)
 
             if current_match > max_match_percentage:
                 max_match_path = pdf_path
-                max_match_page_index = page_index
                 max_match_percentage = current_match
 
-    return max_match_percentage, max_match_path, max_match_page_index
+            if current_match == 1:
+                print(pdf_path, 'exactly matched')
+                break
+
+    return max_match_percentage, max_match_path
 
 
 def parse_args():
     argument_parser = ArgumentParser('Program used to find pdf that contains given image')
 
-    argument_parser.add_argument('-i', '--image', help='Path of image to search for', type=Path)
-    argument_parser.add_argument('-d', '--directory', help='Path of root directory of pdf files to search in', type=Path)
+    argument_parser.add_argument('-i', '--image', help='Path of image to search for', type=Path, required=True)
+    argument_parser.add_argument('-d', '--directory', help='Path of root directory of pdf files to search in', type=Path, required=True)
 
     return argument_parser.parse_args()
 
 
 def main():
     args = parse_args()
-    image_to_search = cv2.imread(args.image, cv2.IMREAD_COLOR)
-    max_match_percentage, max_match_path, max_match_page_index = match_pdf_file(args.directory, image_to_search)
+
+    image_to_search = cv2.imread(str(args.image), cv2.IMREAD_COLOR)
+    max_match_percentage, max_match_path = match_pdf_file(args.directory, image_to_search)
 
     if max_match_path:
         print(
-            f'Max matching pdf is {max_match_path.resolve()} '
-            f'at page {max_match_page_index + 1}',
+            f'Max matching pdf is {max_match_path.resolve()}',
             f'with {max_match_percentage}% matching')
 
 
