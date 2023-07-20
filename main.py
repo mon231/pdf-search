@@ -8,7 +8,7 @@ from tempfile import TemporaryDirectory
 def generate_splitted_pdf(root_dir: Path):
     for pdf_path in root_dir.rglob('*.pdf'):
         with TemporaryDirectory() as extracted_pages_root:
-            pdf2image.convert_from_path(pdf_path, output_folder=extracted_pages_root, dpi=3000)
+            pdf2image.convert_from_path(pdf_path, output_folder=extracted_pages_root, dpi=200, fmt="png")
             yield pdf_path, extracted_pages_root
 
 
