@@ -1,6 +1,0 @@
-[submodule "opencv"]
-	path = opencv
-	url = https://github.com/opencv/opencv.git
-[submodule "poppler"]
-	path = poppler
-	url = https://gitlab.freedesktop.org/poppler/poppler.git
