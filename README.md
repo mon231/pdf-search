@@ -21,5 +21,5 @@ We'll accept the license of the submodule release pointed by our submodule
 #### opencv
 We'll use opencv for image file processing (search template in given image)
 
-#### poppler
-We'll use poppler for pdf processing (split pdf to it's pages as images)
+#### libharu
+We'll use libharu for pdf processing (split pdf to it's pages as images)

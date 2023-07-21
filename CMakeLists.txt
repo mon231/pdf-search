@@ -1,4 +1,6 @@
 project(pdfsearch)
 
 add_subdirectory(opencv)
-add_subdirectory(poppler)
+add_subdirectory(libharu)
+
+add_executable(pdfsearch "pdfsearch/main.cpp")
