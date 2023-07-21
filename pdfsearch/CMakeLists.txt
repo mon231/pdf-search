@@ -5,4 +5,6 @@ file(GLOB_RECURSE HEADER_FILES "*.hpp" "*.h")
 file(GLOB_RECURSE SOURCE_FILES "*.cpp" "*.c" "*.asm" "*.s")
 
 add_executable(pdfsearch ${HEADER_FILES} ${SOURCE_FILES})
-target_link_libraries(pdfsearch PRIVATE opencv libharu)
+target_link_libraries(pdfsearch PRIVATE hpdf opencv_core)
+target_include_directories(pdfsearch PUBLIC "${CMAKE_SOURCE_DIR}/libharu/include" "${CMAKE_SOURCE_DIR}/opencv/include")
+target_include_directories(hpdf PUBLIC "${CMAKE_SOURCE_DIR}/libharu/include")
