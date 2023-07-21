@@ -21,5 +21,7 @@ We'll accept the license of the submodule release pointed by our submodule
 #### opencv
 We'll use opencv for image file processing (search template in given image)
 
-#### libharu
-We'll use libharu for pdf processing (split pdf to it's pages as images)
+#### poppler
+We'll use poppler for pdf processing (split pdf to it's pages as images) <br />
+It doesn't know how to behave as a subproject, so you'll have to install it by yourself, <br />
+For example using `vcpkg install poppler:x86-windows` or `apt install`
