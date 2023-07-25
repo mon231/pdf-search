@@ -166,3 +166,5 @@ cython_debug/
 
 x86/
 x64/
+
+*.user
