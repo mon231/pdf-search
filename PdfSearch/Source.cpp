@@ -1,14 +1,9 @@
 #include <memory>
-#include <iostream>
 #include <opencv2/opencv.hpp>
-#include <poppler/cpp/poppler-toc.h>
 #include <poppler/cpp/poppler-page.h>
 #include <poppler/cpp/poppler-image.h>
-#include <poppler/cpp/poppler-global.h>
 #include <poppler/cpp/poppler-document.h>
-#include <poppler/cpp/poppler-destination.h>
 #include <poppler/cpp/poppler-page-renderer.h>
-#include <poppler/cpp/poppler-page-transition.h>
 
 double get_similarity(const cv::Mat& page, const cv::Mat& subimage)
 {
