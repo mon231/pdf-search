@@ -24,12 +24,24 @@
     <ClCompile Include="PdfFeeder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PdfConsumer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PdfSearch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PdfPagesIterator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PdfFeeder.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PdfConsumer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PdfSearch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

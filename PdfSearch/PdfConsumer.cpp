@@ -3,9 +3,9 @@
 
 PdfConsumer::PdfConsumer(
 	const cv::Mat& searched_image,
-	const std::shared_ptr<std::queue<cv::Mat>> pages_queue) :
+	const std::shared_ptr<std::queue<cv::Mat>> pdf_pages_queue) :
 	_searched_image(searched_image),
-	_pages_queue(pages_queue),
+	_pdf_pages_queue(pdf_pages_queue),
 	_most_similar_pdf_similarity(),
 	_most_similar_pdf_path()
 {}
@@ -14,8 +14,8 @@ void PdfConsumer::consume_loop()
 {
 	while (true)
 	{
-		consume_one_page(_pages_queue->back());
-		_pages_queue->pop();
+		consume_one_page(_pdf_pages_queue->back());
+		_pdf_pages_queue->pop();
 	}
 }
 

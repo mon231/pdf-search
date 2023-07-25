@@ -74,13 +74,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="PdfConsumer.cpp" />
     <ClCompile Include="PdfFeeder.cpp" />
     <ClCompile Include="PdfPagesIterator.cpp" />
+    <ClCompile Include="PdfSearch.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PdfConsumer.hpp" />
     <ClInclude Include="PdfFeeder.hpp" />
     <ClInclude Include="PdfPagesIterator.hpp" />
+    <ClInclude Include="PdfSearch.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

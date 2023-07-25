@@ -9,7 +9,7 @@ class PdfConsumer
 public:
 	explicit PdfConsumer(
 		const cv::Mat& searched_image,
-		const std::shared_ptr<std::queue<cv::Mat>> pages_queue);
+		const std::shared_ptr<std::queue<cv::Mat>> pdf_pages_queue);
 
 public:
 	void consume_loop();
@@ -24,5 +24,5 @@ private:
 	double _most_similar_pdf_similarity;
 	std::string _most_similar_pdf_path;
 	const cv::Mat _searched_image;
-	const std::shared_ptr<std::queue<cv::Mat>> _pages_queue;
+	const std::shared_ptr<std::queue<cv::Mat>> _pdf_pages_queue;
 };
