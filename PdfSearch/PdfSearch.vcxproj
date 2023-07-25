@@ -79,12 +79,14 @@
     <ClCompile Include="PdfPagesIterator.cpp" />
     <ClCompile Include="PdfSearch.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="ThreadSafeQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PdfConsumer.hpp" />
     <ClInclude Include="PdfFeeder.hpp" />
     <ClInclude Include="PdfPagesIterator.hpp" />
     <ClInclude Include="PdfSearch.hpp" />
+    <ClInclude Include="ThreadSafeQueue.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
