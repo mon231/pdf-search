@@ -1,9 +1,7 @@
 #pragma once
 
-#include <queue>
-#include <memory>
+#include "PdfImagesQueue.hpp"
 #include <filesystem>
-#include <opencv2/opencv.hpp>
 
 class PdfSearch
 {
@@ -22,5 +20,5 @@ private:
 private:
 	const cv::Mat _image_to_search;
 	const std::filesystem::path _pdfs_root;
-	const std::shared_ptr<std::queue<cv::Mat>> _pdf_images_queue;
+	const PdfImagesQueue _pdf_images_queue;
 };

@@ -3,35 +3,35 @@
 
 PdfConsumer::PdfConsumer(
 	const cv::Mat& searched_image,
-	const std::shared_ptr<std::queue<cv::Mat>> pdf_pages_queue) :
+	const PdfImagesQueue& pdf_pages_queue) :
 	_searched_image(searched_image),
 	_pdf_pages_queue(pdf_pages_queue),
-	_most_similar_pdf_similarity(),
-	_most_similar_pdf_path()
+	_most_similar_page_similarity(),
+	_most_similar_page_id()
 {}
 
 void PdfConsumer::consume_loop()
 {
 	while (true)
 	{
-		consume_one_page(_pdf_pages_queue->back());
-		_pdf_pages_queue->pop();
+		auto [page_image, page_id] = _pdf_pages_queue->dequeue();
+		consume_one_page(page_image, page_id);
 	}
 }
 
-void PdfConsumer::consume_one_page(const cv::Mat& page)
+void PdfConsumer::consume_one_page(const cv::Mat& page, const std::string& page_id)
 {
-	const double simi = get_similarity(page, _searched_image);
+	const double similarity = get_similarity(page, _searched_image);
 	
-	if (simi == 1)
+	if (similarity == 1.0)
 	{
-		// TODO: cout path
+		std::cout << page_id << std::endl;
 	}
 
-	if (simi > _most_similar_pdf_similarity)
+	if (similarity > _most_similar_page_similarity)
 	{
-		// TODO: update path
-		_most_similar_pdf_similarity = simi;
+		_most_similar_page_id = page_id;
+		_most_similar_page_similarity = similarity;
 	}
 }
 

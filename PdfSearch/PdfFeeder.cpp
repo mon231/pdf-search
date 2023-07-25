@@ -3,7 +3,7 @@
 
 PdfFeeder::PdfFeeder(
 	const std::filesystem::path& pdfs_root,
-	const std::shared_ptr<std::queue<cv::Mat>> pdf_pages_queue) :
+	const PdfImagesQueue& pdf_pages_queue) :
 	_pdfs_root(pdfs_root),
 	_renderer(std::make_shared<poppler::page_renderer>()),
 	_pdf_pages_queue(pdf_pages_queue)
@@ -33,10 +33,12 @@ void PdfFeeder::feed_loop()
 void PdfFeeder::feed_pdf_file(const std::filesystem::path& pdf_path)
 {
 	for (
-		PdfPagesIterator pdf_pages_iterator{ pdf_path.string(), _renderer};
+		PdfPagesIterator pdf_pages_iterator{ pdf_path.string(), _renderer };
 		pdf_pages_iterator.has_more_pages();
 		pdf_pages_iterator.iterate_to_next_page())
 	{
-		_pdf_pages_queue->push(pdf_pages_iterator.get_current_page());
+		_pdf_pages_queue->enqueue(std::pair{
+			pdf_pages_iterator.get_current_page(),
+			pdf_pages_iterator.get_current_page_id() });
 	}
 }

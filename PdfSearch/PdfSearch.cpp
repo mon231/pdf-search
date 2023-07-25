@@ -6,20 +6,17 @@
 #include <thread>
 
 PdfSearch::PdfSearch(
-	const std::filesystem::path& image_to_search, 
-	const std::filesystem::path& pdfs_root):
+	const std::filesystem::path& image_to_search,
+	const std::filesystem::path& pdfs_root) :
 	_image_to_search(cv::imread(image_to_search.string())),
 	_pdfs_root(pdfs_root),
-	_pdf_images_queue(std::make_shared<std::queue<cv::Mat>>())
+	_pdf_images_queue(std::make_shared<PdfImagesQueue::element_type>())
 {}
 
 void PdfSearch::search()
 {
-	std::thread feeder_thread{ &PdfSearch::feeder_thread_entrypoint, this };
-	std::thread consumer_thread{ &PdfSearch::consumer_thread_entrypoint, this };
-
-	feeder_thread.join();
-	consumer_thread.join();
+	std::jthread feeder_thread{ &PdfSearch::feeder_thread_entrypoint, this };
+	std::jthread consumer_thread{ &PdfSearch::consumer_thread_entrypoint, this };
 }
 
 void PdfSearch::feeder_thread_entrypoint()

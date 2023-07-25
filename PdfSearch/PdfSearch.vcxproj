@@ -84,6 +84,7 @@
   <ItemGroup>
     <ClInclude Include="PdfConsumer.hpp" />
     <ClInclude Include="PdfFeeder.hpp" />
+    <ClInclude Include="PdfImagesQueue.hpp" />
     <ClInclude Include="PdfPagesIterator.hpp" />
     <ClInclude Include="PdfSearch.hpp" />
     <ClInclude Include="ThreadSafeQueue.hpp" />

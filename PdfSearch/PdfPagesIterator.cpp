@@ -13,7 +13,8 @@ PdfPagesIterator::PdfPagesIterator(
     const std::shared_ptr<poppler::page_renderer>& renderer):
 	_current_page_index(),
     _pdf_document(poppler::document::load_from_file(pdf_path)),
-    _renderer(renderer)
+    _renderer(renderer),
+	_pdf_path(pdf_path)
 {
 }
 
@@ -45,4 +46,9 @@ cv::Mat PdfPagesIterator::get_current_page() const
 	notOwningImageMat.copyTo(tempOwningMat);
 
 	return tempOwningMat;
+}
+
+std::string PdfPagesIterator::get_current_page_id() const
+{
+	return _pdf_path + ", at page " + std::to_string(_current_page_index);
 }
