@@ -33,6 +33,9 @@
     <ClCompile Include="ThreadSafeQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PathsFeeder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PdfPagesIterator.hpp">
@@ -50,7 +53,10 @@
     <ClInclude Include="ThreadSafeQueue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PdfImagesQueue.hpp">
+    <ClInclude Include="QueuesDefinitions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PathsFeeder.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

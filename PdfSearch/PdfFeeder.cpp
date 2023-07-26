@@ -3,30 +3,20 @@
 
 PdfFeeder::PdfFeeder(
 	const std::filesystem::path& pdfs_root,
-	const PdfImagesQueue& pdf_pages_queue) :
+	const PdfImagesQueue& pdf_pages_queue,
+	const PdfPathsQueue& pdf_paths_queue) :
 	_pdfs_root(pdfs_root),
 	_renderer(std::make_shared<poppler::page_renderer>()),
-	_pdf_pages_queue(pdf_pages_queue)
+	_pdf_pages_queue(pdf_pages_queue),
+	_pdf_paths_queue(pdf_paths_queue)
 {
 }
 
 void PdfFeeder::feed_loop()
 {
-	for (const auto& fs_entry : std::filesystem::recursive_directory_iterator{ _pdfs_root })
+	while (!_pdf_paths_queue->empty() || !_pdf_paths_queue->should_quit())
 	{
-		if (!fs_entry.is_regular_file()) 
-		{
-			continue;
-		}
-
-		const std::filesystem::path& entry_path = fs_entry.path();
-
-		if (entry_path.extension() != ".pdf")
-		{
-			continue;
-		}
-
-		feed_pdf_file(entry_path);
+		feed_pdf_file(_pdf_paths_queue->dequeue());
 	}
 }
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "PdfImagesQueue.hpp"
+#include "QueuesDefinitions.hpp"
 
 #include <memory>
 #include <opencv2/opencv.hpp>

@@ -74,6 +74,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="PathsFeeder.cpp" />
     <ClCompile Include="PdfConsumer.cpp" />
     <ClCompile Include="PdfFeeder.cpp" />
     <ClCompile Include="PdfPagesIterator.cpp" />
@@ -82,9 +83,10 @@
     <ClCompile Include="ThreadSafeQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PathsFeeder.hpp" />
     <ClInclude Include="PdfConsumer.hpp" />
     <ClInclude Include="PdfFeeder.hpp" />
-    <ClInclude Include="PdfImagesQueue.hpp" />
+    <ClInclude Include="QueuesDefinitions.hpp" />
     <ClInclude Include="PdfPagesIterator.hpp" />
     <ClInclude Include="PdfSearch.hpp" />
     <ClInclude Include="ThreadSafeQueue.hpp" />
