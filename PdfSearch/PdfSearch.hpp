@@ -19,7 +19,7 @@ private:
 	void paths_feeder_thread_entrypoint();
 
 private:
-	const cv::Mat _image_to_search;
+	const std::shared_ptr<cv::Mat> _image_to_search;
 	const std::filesystem::path _pdfs_root;
 	const PdfImagesQueue _pdf_images_queue;
 	const PdfPathsQueue _pdf_paths_queue;

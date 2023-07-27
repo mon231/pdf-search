@@ -2,7 +2,7 @@
 #include <iostream>
 
 PdfConsumer::PdfConsumer(
-	const cv::Mat& searched_image,
+	const std::shared_ptr<cv::Mat>& searched_image,
 	const PdfImagesQueue& pdf_pages_queue) :
 	_searched_image(searched_image),
 	_pdf_pages_queue(pdf_pages_queue),
@@ -21,7 +21,7 @@ void PdfConsumer::consume_loop()
 
 void PdfConsumer::consume_one_page(const cv::Mat& page, const std::string& page_id)
 {
-	const double similarity = get_similarity(page, _searched_image);
+	const double similarity = get_similarity(page, *_searched_image);
 	
 	if (similarity == 1.0)
 	{
@@ -37,8 +37,13 @@ void PdfConsumer::consume_one_page(const cv::Mat& page, const std::string& page_
 
 double PdfConsumer::get_similarity(const cv::Mat& page, const cv::Mat& subimage)
 {
+	cv::Mat grayed_page{}, grayed_subimage{};
+
+	cv::cvtColor(page, grayed_page, cv::COLOR_BGR2GRAY);
+	cv::cvtColor(subimage, grayed_subimage, cv::COLOR_BGR2GRAY);
+
 	cv::Mat restempl{};
-	cv::matchTemplate(page, subimage, restempl, cv::TM_CCOEFF_NORMED);
+	cv::matchTemplate(grayed_page, grayed_subimage, restempl, cv::TM_CCOEFF_NORMED);
 
 	double max_val = 0;
 	cv::minMaxIdx(page, nullptr, &max_val, nullptr, nullptr, restempl);
