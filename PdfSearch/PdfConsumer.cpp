@@ -15,7 +15,7 @@ void PdfConsumer::consume_loop()
 	while (true)
 	{
 		auto [page_image, page_id] = _pdf_pages_queue->dequeue();
-		consume_one_page(page_image, page_id);
+		consume_one_page(*page_image, page_id);
 	}
 }
 

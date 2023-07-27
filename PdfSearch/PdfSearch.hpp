@@ -1,7 +1,8 @@
 #pragma once
-
 #include "QueuesDefinitions.hpp"
+
 #include <filesystem>
+#include <poppler/cpp/poppler-page-renderer.h>
 
 class PdfSearch final
 {
@@ -20,6 +21,7 @@ private:
 
 private:
 	const std::shared_ptr<cv::Mat> _image_to_search;
+	const std::shared_ptr<poppler::page_renderer> _pdf_page_renderer;
 	const std::filesystem::path _pdfs_root;
 	const PdfImagesQueue _pdf_images_queue;
 	const PdfPathsQueue _pdf_paths_queue;

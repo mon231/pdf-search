@@ -13,7 +13,7 @@ PdfPagesIterator::PdfPagesIterator(
     const std::shared_ptr<poppler::page_renderer>& renderer):
 	_current_page_index(),
     _pdf_document(poppler::document::load_from_file(pdf_path)),
-    _renderer(renderer),
+    _pdf_page_renderer(renderer),
 	_pdf_path(pdf_path)
 {
 }
@@ -28,12 +28,12 @@ bool PdfPagesIterator::has_more_pages() const
     return static_cast<size_t>(_pdf_document->pages()) != _current_page_index;
 }
 
-cv::Mat PdfPagesIterator::get_current_page() const
+std::shared_ptr<cv::Mat> PdfPagesIterator::get_current_page() const
 {
 	std::unique_ptr<poppler::page> current_page{ _pdf_document->create_page(_current_page_index) };
 
 	static constexpr double PAGE_DPI = 200;
-	poppler::image current_page_image = _renderer->render_page(current_page.get(), PAGE_DPI, PAGE_DPI);
+	poppler::image current_page_image = _pdf_page_renderer->render_page(current_page.get(), PAGE_DPI, PAGE_DPI);
 
 	cv::Mat notOwningImageMat{
 		current_page_image.height(),
@@ -42,10 +42,10 @@ cv::Mat PdfPagesIterator::get_current_page() const
 		current_page_image.data(),
 		static_cast<size_t>(current_page_image.bytes_per_row()) };
 
-	cv::Mat tempOwningMat;
-	notOwningImageMat.copyTo(tempOwningMat);
+	std::shared_ptr<cv::Mat> resultSharedMat = std::make_shared<cv::Mat>();
+	notOwningImageMat.copyTo(*resultSharedMat);
 
-	return tempOwningMat;
+	return resultSharedMat;
 }
 
 std::string PdfPagesIterator::get_current_page_id() const

@@ -7,4 +7,4 @@
 #include <opencv2/opencv.hpp>
 
 using PdfPathsQueue = std::shared_ptr<ThreadSafeQueue<std::filesystem::path>>;
-using PdfImagesQueue = std::shared_ptr<ThreadSafeQueue<std::pair<cv::Mat, std::string>>>;
+using PdfImagesQueue = std::shared_ptr<ThreadSafeQueue<std::pair<std::shared_ptr<cv::Mat>, std::string>>>;
