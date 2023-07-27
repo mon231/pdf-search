@@ -13,6 +13,7 @@ public:
 
 public:
 	void consume_loop();
+	std::string get_most_similar_description() const;
 
 private:
 	void consume_one_page(const cv::Mat& page, const std::string& page_id);

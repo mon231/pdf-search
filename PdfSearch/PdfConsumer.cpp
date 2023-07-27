@@ -19,6 +19,13 @@ void PdfConsumer::consume_loop()
 	}
 }
 
+std::string PdfConsumer::get_most_similar_description() const
+{
+	static const double RATIO_TO_PRECENTAGE = 100;
+	return "Most similar page is " + _most_similar_page_id +
+		" with " + std::to_string(_most_similar_page_similarity * RATIO_TO_PRECENTAGE) + "%";
+}
+
 void PdfConsumer::consume_one_page(const cv::Mat& page, const std::string& page_id)
 {
 	const double similarity = get_similarity(page, *_searched_image);
@@ -37,16 +44,11 @@ void PdfConsumer::consume_one_page(const cv::Mat& page, const std::string& page_
 
 double PdfConsumer::get_similarity(const cv::Mat& page, const cv::Mat& subimage)
 {
-	cv::Mat grayed_page{}, grayed_subimage{};
-
-	cv::cvtColor(page, grayed_page, cv::COLOR_BGR2GRAY);
-	cv::cvtColor(subimage, grayed_subimage, cv::COLOR_BGR2GRAY);
-
 	cv::Mat restempl{};
-	cv::matchTemplate(grayed_page, grayed_subimage, restempl, cv::TM_CCOEFF_NORMED);
+	cv::matchTemplate(page, subimage, restempl, cv::TM_CCOEFF_NORMED);
 
 	double max_val = 0;
-	cv::minMaxIdx(page, nullptr, &max_val, nullptr, nullptr, restempl);
+	cv::minMaxLoc(restempl, nullptr, &max_val);
 
 	return max_val;
 }
