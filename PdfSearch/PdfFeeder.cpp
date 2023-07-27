@@ -15,7 +15,7 @@ PdfFeeder::PdfFeeder(
 
 void PdfFeeder::feed_loop()
 {
-	while (!_pdf_paths_queue->empty() || !_pdf_paths_queue->should_quit())
+	while (true)
 	{
 		feed_pdf_file(_pdf_paths_queue->dequeue());
 	}

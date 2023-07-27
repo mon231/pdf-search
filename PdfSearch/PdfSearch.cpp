@@ -14,8 +14,8 @@ PdfSearch::PdfSearch(
 	_image_to_search(std::make_shared<cv::Mat>()),
 	_pdfs_root(pdfs_root),
 	_pdf_page_renderer(std::make_shared<poppler::page_renderer>()),
-	_pdf_images_queue(std::make_shared<PdfImagesQueue::element_type>()),
-	_pdf_paths_queue(std::make_shared<PdfPathsQueue::element_type>())
+	_pdf_images_queue(std::make_shared<PdfImagesQueue::element_type>(100)),
+	_pdf_paths_queue(std::make_shared<PdfPathsQueue::element_type>(100))
 {
 	_pdf_page_renderer->set_image_format(poppler::image::format_bgr24);
 
@@ -57,6 +57,8 @@ void PdfSearch::pdf_consumer_thread_entrypoint()
 	{
 		PdfConsumer pdf_consumer{ _image_to_search, _pdf_images_queue };
 		pdf_consumer.consume_loop();
+
+		std::cout << pdf_consumer.get_most_similar_description() << std::endl;
 	}
 	catch (const std::exception& e)
 	{
