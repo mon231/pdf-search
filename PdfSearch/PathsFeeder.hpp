@@ -6,7 +6,7 @@
 #include <string>
 #include <filesystem>
 
-class PathsFeeder
+class PathsFeeder final
 {
 public:
 	explicit PathsFeeder(

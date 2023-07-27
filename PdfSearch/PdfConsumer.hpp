@@ -4,7 +4,7 @@
 #include <memory>
 #include <opencv2/opencv.hpp>
 
-class PdfConsumer
+class PdfConsumer final
 {
 public:
 	explicit PdfConsumer(

@@ -3,7 +3,7 @@
 #include "QueuesDefinitions.hpp"
 #include <filesystem>
 
-class PdfSearch
+class PdfSearch final
 {
 public:
 	explicit PdfSearch(

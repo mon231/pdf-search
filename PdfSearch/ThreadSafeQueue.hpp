@@ -5,7 +5,7 @@
 #include <condition_variable>
 
 template <typename T>
-class ThreadSafeQueue
+class ThreadSafeQueue final
 {
 public:
 	void enqueue(T item)
