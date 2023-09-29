@@ -19,9 +19,6 @@ jobs:
     - name: Add MSBuild
       uses: microsoft/setup-msbuild@v1.0.2
 
-    - name: Restore NuGet packages
-      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
-
     - name: Setup vcpkg
       run: |
         git clone https://github.com/Microsoft/vcpkg.git
@@ -29,15 +26,23 @@ jobs:
         .\vcpkg\vcpkg.exe install ${{env.VCPKG_PACKAGES}}
         .\vcpkg\vcpkg.exe integrate install
 
-    # TODO: setup upx
+    - name: Setup upx
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v${{env.UPX_VERSION}}/upx-${{env.UPX_VERSION}}-win32.zip" -OutFile upx32.zip
+        Expand-Archive -Path "upx32.zip" -DestinationPath "."
+        Rename-Item -Path "upx-${{env.UPX_VERSION}}-win32" -NewName upx32
 
     - name: Fetch commit files
       uses: actions/checkout@v3
 
+    - name: Restore NuGet packages
+      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+
     - name: Build
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
 
-    # TODO: pack using upx
+    - name: Pack build # TODO: impl
+      run: upx32\upx.exe upx -o Release\packed-pdf-search.exe Release\PdfSearch.exe Release\*.dll
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3.1.2
