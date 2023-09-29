@@ -6,17 +6,16 @@ permissions:
 on: [push, pull_request]
 
 env:
+  UPX_VERSION: '4.1.0'
   BUILD_CONFIGURATION: Release
   SOLUTION_FILE_PATH: PdfSearch.sln
-  VCPKG_PACKAGES: 'poppler:x86-windows'
+  VCPKG_PACKAGES: 'poppler:x86-windows opencv:x86-windows'
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
-
     - name: Add MSBuild
       uses: microsoft/setup-msbuild@v1.0.2
 
@@ -30,8 +29,15 @@ jobs:
         .\vcpkg\vcpkg.exe install ${{env.VCPKG_PACKAGES}}
         .\vcpkg\vcpkg.exe integrate install
 
+    # TODO: setup upx
+
+    - name: Fetch commit files
+      uses: actions/checkout@v3
+
     - name: Build
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+
+    # TODO: pack using upx
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3.1.2
