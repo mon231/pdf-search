@@ -26,12 +26,6 @@ jobs:
         .\vcpkg\vcpkg.exe install ${{env.VCPKG_PACKAGES}}
         .\vcpkg\vcpkg.exe integrate install
 
-    - name: Setup upx
-      run: |
-        Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v${{env.UPX_VERSION}}/upx-${{env.UPX_VERSION}}-win32.zip" -OutFile upx32.zip
-        Expand-Archive -Path "upx32.zip" -DestinationPath "."
-        Rename-Item -Path "upx-${{env.UPX_VERSION}}-win32" -NewName upx32
-
     - name: Fetch commit files
       uses: actions/checkout@v3
 
@@ -48,11 +42,6 @@ jobs:
         name: unpacked-build
         path: Release\
 
-    - name: Pack build
-      run: |
-        $dllFiles = Get-ChildItem -Path Release -Filter *.dll
-        upx32\upx.exe -o Release\packed-pdf-search.exe Release\PdfSearch.exe $dllFiles
-
   publish-release:
     runs-on: windows-latest
     if: startsWith(github.ref, 'refs/tags/')
@@ -66,14 +55,12 @@ jobs:
 
       with:
         name: release-build
-        path: .
-
-    - name: Prepare release executable
-      run: Rename-Item -Path packed-pdf-search.exe -NewName pdf-search.exe
+        path: build-files
 
     - name: Release and upload artifacts
       uses: softprops/action-gh-release@v1
 
       with:
         files: |
-          pdf-search.exe
+          build-files/*.exe
+          build-files/*.dll
