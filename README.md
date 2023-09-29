@@ -1,6 +1,7 @@
 # pdf-search
 Cross platform program used to find which pdf contains given image <br />
-Designed to search inside a root of pdf files and subfolders
+Designed to search inside a root of pdf files and subfolders <br />
+The project is still in WIP conditions and might be a bit buggy
 
 ## POC
 We provide a python one-file script as a poc of program usage and features
