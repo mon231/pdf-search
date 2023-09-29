@@ -9,7 +9,7 @@ env:
   UPX_VERSION: '4.1.0'
   BUILD_CONFIGURATION: Release
   SOLUTION_FILE_PATH: PdfSearch.sln
-  VCPKG_PACKAGES: 'poppler:x86-windows opencv:x86-windows'
+  VCPKG_PACKAGES: 'poppler:x86-windows opencv2:x86-windows'
 
 jobs:
   build:
@@ -41,15 +41,17 @@ jobs:
     - name: Build
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
 
-    - name: Pack build # TODO: impl
-      run: upx32\upx.exe upx -o Release\packed-pdf-search.exe Release\PdfSearch.exe Release\*.dll
-
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3.1.2
 
       with:
-        name: release-build
+        name: unpacked-build
         path: Release\
+
+    - name: Pack build
+      run: |
+        $dllFiles = Get-ChildItem -Path Release -Filter *.dll
+        upx32\upx.exe -o Release\packed-pdf-search.exe Release\PdfSearch.exe $dllFiles
 
   publish-release:
     runs-on: windows-latest
@@ -66,9 +68,12 @@ jobs:
         name: release-build
         path: .
 
+    - name: Prepare release executable
+      run: Rename-Item -Path packed-pdf-search.exe -NewName pdf-search.exe
+
     - name: Release and upload artifacts
       uses: softprops/action-gh-release@v1
 
       with:
         files: |
-          PdfSearch.exe
+          pdf-search.exe
