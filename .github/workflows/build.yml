@@ -39,7 +39,7 @@ jobs:
       uses: actions/upload-artifact@v3.1.2
 
       with:
-        name: unpacked-build
+        name: release-build
         path: Release\
 
   publish-release:
