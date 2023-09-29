@@ -29,7 +29,8 @@ std::string PdfConsumer::get_most_similar_description() const
 void PdfConsumer::consume_one_page(const cv::Mat& page, const std::string& page_id)
 {
 	const double similarity = get_similarity(page, *_searched_image);
-	
+
+	// TODO: is bigger than threshold O(EPSILON)
 	if (similarity == 1.0)
 	{
 		std::cout << page_id << std::endl;

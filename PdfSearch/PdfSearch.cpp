@@ -25,25 +25,35 @@ PdfSearch::PdfSearch(
 
 void PdfSearch::search()
 {
-	std::list<std::jthread> lst;
+	std::jthread paths_feeder(&PdfSearch::paths_feeder_thread_entrypoint, this);
 
-	lst.emplace_back(&PdfSearch::paths_feeder_thread_entrypoint, this);
-	lst.emplace_back(&PdfSearch::pdf_consumer_thread_entrypoint, this);
+	std::list<std::jthread> pdf_feeders;
+	pdf_feeders.emplace_back(&PdfSearch::pdf_feeder_thread_entrypoint, this);
+	pdf_feeders.emplace_back(&PdfSearch::pdf_feeder_thread_entrypoint, this);
+	pdf_feeders.emplace_back(&PdfSearch::pdf_feeder_thread_entrypoint, this);
+	pdf_feeders.emplace_back(&PdfSearch::pdf_feeder_thread_entrypoint, this);
 
-	lst.emplace_back(&PdfSearch::pdf_feeder_thread_entrypoint, this);
-	lst.emplace_back(&PdfSearch::pdf_feeder_thread_entrypoint, this);
-	lst.emplace_back(&PdfSearch::pdf_feeder_thread_entrypoint, this);
-	lst.emplace_back(&PdfSearch::pdf_feeder_thread_entrypoint, this);
+	std::list<std::jthread> pdf_consumers;
+	pdf_consumers.emplace_back(&PdfSearch::pdf_consumer_thread_entrypoint, this);
+	pdf_consumers.emplace_back(&PdfSearch::pdf_consumer_thread_entrypoint, this);
+	pdf_consumers.emplace_back(&PdfSearch::pdf_consumer_thread_entrypoint, this);
+	pdf_consumers.emplace_back(&PdfSearch::pdf_consumer_thread_entrypoint, this);
+
+	for (auto& feeder_thread : pdf_feeders)
+	{
+		feeder_thread.join();
+	}
+
+	_pdf_images_queue->signal_quit();
 }
 
 void PdfSearch::pdf_feeder_thread_entrypoint()
 {
+	PdfFeeder pdf_feeder{ _pdfs_root, _pdf_page_renderer, _pdf_images_queue, _pdf_paths_queue };
+
 	try
 	{
-		PdfFeeder pdf_feeder{ _pdfs_root, _pdf_page_renderer, _pdf_images_queue, _pdf_paths_queue };
 		pdf_feeder.feed_loop();
-
-		_pdf_images_queue->signal_quit();
 	}
 	catch (const std::exception& e)
 	{
@@ -53,26 +63,27 @@ void PdfSearch::pdf_feeder_thread_entrypoint()
 
 void PdfSearch::pdf_consumer_thread_entrypoint()
 {
+	PdfConsumer pdf_consumer{ _image_to_search, _pdf_images_queue };
+
 	try
 	{
-		PdfConsumer pdf_consumer{ _image_to_search, _pdf_images_queue };
 		pdf_consumer.consume_loop();
-
-		std::cout << pdf_consumer.get_most_similar_description() << std::endl;
 	}
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
 	}
+
+	std::cout << pdf_consumer.get_most_similar_description() << std::endl;
 }
 
 void PdfSearch::paths_feeder_thread_entrypoint()
 {
-	try 
-	{
-		static constexpr const char* PDF_EXTENSION = "pdf";
-		PathsFeeder paths_feeder{ _pdfs_root, PDF_EXTENSION, _pdf_paths_queue };
+	static constexpr const char* PDF_EXTENSION = "pdf";
+	PathsFeeder paths_feeder{ _pdfs_root, PDF_EXTENSION, _pdf_paths_queue };
 
+	try
+	{
 		paths_feeder.feed_paths();
 		_pdf_paths_queue->signal_quit();
 	}
