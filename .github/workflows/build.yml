@@ -10,7 +10,7 @@ env:
   BUILD_PLATFORM: x86
   BUILD_CONFIGURATION: Release
   SOLUTION_FILE_PATH: PdfSearch.sln
-  VCPKG_PACKAGES: 'poppler:x86-windows opencv2:x86-windows'
+  VCPKG_PACKAGES: 'poppler:x86-windows opencv2:x86-windows poppler:x64-windows opencv2:x64-windows'
 
 jobs:
   build:
