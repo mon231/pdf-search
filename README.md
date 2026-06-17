@@ -1,28 +1,47 @@
-# pdf-search
-Cross platform program used to find which pdf contains given image <br />
-Designed to search inside a root of pdf files and subfolders <br />
-The project is still in WIP conditions and might be a bit buggy
+# PDF Search Project
 
-## POC
-We provide a python one-file script as a poc of program usage and features
+This project is a Rust-based tool for searching PDFs to find specific images. It scans through PDF files in a specified directory and compares them to a target image to identify which PDF contains the image.
 
-## cpp project
-We provide a cpp project using cross-platform cmake for windows and linux compilations, <br />
-In order to support various users using common libs
+## Requirements
 
-### algorithm
-We'll use a thread which processes images from given queue, and searches for the given image inside them <br />
-In addition, we'll use multiple threads which iterates pdf file from the root (rglob), <br />
-And add them to queue for further processing by the thread above
+- Rust and Cargo installed
 
-### 3rd party libs
-We'll use 3rd-party libs as submodules which points to the latest release-tags of these librarys <br />
-We'll accept the license of the submodule release pointed by our submodule
+## Setup
 
-#### opencv
-We'll use opencv for image file processing (search template in given image)
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   ```
 
-#### poppler
-We'll use poppler for pdf processing (split pdf to it's pages as images) <br />
-It doesn't know how to behave as a subproject, so you'll have to install it by yourself, <br />
-For example using `vcpkg install poppler:x86-windows` or `apt install`
+2. Navigate to the project directory:
+   ```bash
+   cd pdf_search
+   ```
+
+3. Build the project:
+   ```bash
+   cargo build --release
+   ```
+
+## Usage
+
+To use the tool, run the following command:
+
+```bash
+cargo run --release -- <path-to-pdf-directory> <path-to-target-image>
+```
+
+- `<path-to-pdf-directory>`: Directory containing the PDFs to search.
+- `<path-to-target-image>`: Path to the image to search for in the PDFs.
+
+## Example
+
+```bash
+cargo run --release -- C:\Users\avart\Desktop\ComputerSciense\compilation\Exams C:\Users\avart\Desktop\ComputerSciense\compilation\qu_test.png
+```
+
+This will search through all PDFs in the `Exams` directory to find the one containing the `qu_test.png` image.
+
+## License
+
+This project is licensed under the MIT License.
