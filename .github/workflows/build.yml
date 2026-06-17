@@ -1,51 +1,99 @@
-name: Build chess project
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
 
 permissions:
-  contents: write
-
-on: [push, pull_request]
+  contents: write   # needed for release uploads
 
 env:
-  UPX_VERSION: '4.1.0'
-  BUILD_PLATFORM: x86
-  BUILD_CONFIGURATION: Release
-  SOLUTION_FILE_PATH: PdfSearch.sln
-  VCPKG_PACKAGES: 'poppler:x86-windows opencv2:x86-windows poppler:x64-windows opencv2:x64-windows'
+  CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-    runs-on: windows-latest
+  # ── build + test ─────────────────────────────────────────────────────────────
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
 
     steps:
-    - name: Fetch commit files
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v3.1.2
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
 
-      with:
-        name: release-build
-        path: Release\
+      - name: Cache cargo registry + build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
 
-  publish-release:
-    runs-on: windows-latest
-    if: startsWith(github.ref, 'refs/tags/')
+      - name: Build (debug)
+        run: cargo build --all-targets
 
-    needs:
-      - build
+      - name: Run tests (release)
+        run: cargo test --release -- --nocapture
+
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+  # ── release binary (tag pushes only) ─────────────────────────────────────────
+  release:
+    name: Release (${{ matrix.target }})
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            binary: pdf_image_search
+            artifact: pdf_image_search-linux-x86_64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            binary: pdf_image_search.exe
+            artifact: pdf_image_search-windows-x86_64.exe
 
     steps:
-    - name: Download build artifacts
-      uses: actions/download-artifact@v3
+      - uses: actions/checkout@v4
 
-      with:
-        name: release-build
-        path: build-files
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
 
-    - name: Release and upload artifacts
-      uses: softprops/action-gh-release@v1
+      - name: Cache cargo registry + build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-release-${{ hashFiles('Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-release-
 
-      with:
-        files: |
-          build-files/*.exe
-          build-files/*.dll
+      - name: Build release binary
+        run: cargo build --release --bin pdf_image_search --target ${{ matrix.target }}
+
+      - name: Rename artifact
+        shell: bash
+        run: |
+          cp target/${{ matrix.target }}/release/${{ matrix.binary }} ${{ matrix.artifact }}
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.artifact }}
